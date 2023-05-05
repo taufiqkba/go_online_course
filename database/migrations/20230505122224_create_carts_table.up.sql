@@ -1,0 +1,8 @@
+CREATE TABLE carts (
+    id INT NOT NULL AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL,
+    PRIMARY KEY(id)
+)
