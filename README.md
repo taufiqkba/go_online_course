@@ -1,6 +1,6 @@
-# ONLINE COURSE
+# Online Course
 
-## DAY 1
+### DAY 1
 
 - Theori learning (Dependency Injection, Microservice)
 - Initialize serveral Go modules:
@@ -11,3 +11,12 @@
   - [Air Load](https://github.com/cosmtrek/air)
 - Analysis Database Table Design & Relationship
 - Implementation migration from database design
+
+### DAY 2
+
+- Oauth, Authentication, Authorization
+- Initialize serveral Go modules:
+  - [GoDotEnv](https://github.com/joho/godotenv)
+  - [SendGrid](https://github.com/sendgrid/sendgrid-go)
+- Register user service
+- Implementation SendGrid email service
