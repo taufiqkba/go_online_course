@@ -4,7 +4,7 @@ import "database/sql"
 
 type OauthAccessToken struct {
 	ID            int64        `json:"id"`
-	OauthClient   *OauthClient `gorm:"foreignKey:OauthClientID;reference:ID"`
+	OauthClient   *OauthClient `gorm:"foreignKey:OauthClientID;references:ID"`
 	OauthClientID *int64       `json:"oauth_client_id"`
 	UserID        int64        `json:"user_id"`
 	Token         string       `json:"token"`
