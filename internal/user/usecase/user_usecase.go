@@ -13,6 +13,7 @@ import (
 type UserUseCase interface {
 	FindAll(offset int, limit int) []entity.User
 	FindById(id int) (*entity.User, error)
+	FindByEmail(email string) (*entity.User, error)
 	Create(userDto dto.UserRequestBody) (*entity.User, error)
 	Update(userDto dto.UserRequestBody) (*entity.User, error)
 	Delete(id int) error

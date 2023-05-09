@@ -20,5 +20,7 @@ func main() {
 	registerUseCase := usecase2.NewRegisterUseCase(userUseCase, mail)
 	http.NewRegisterHandler(registerUseCase).Route(&r.RouterGroup)
 
+	//oauth.InitializedService(db).Router(&r.RouterGroup)
+
 	r.Run() //0.0.0.0:8080
 }
