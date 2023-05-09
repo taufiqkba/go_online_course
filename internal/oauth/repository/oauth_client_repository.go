@@ -16,10 +16,10 @@ type OauthClientRepositoryImpl struct {
 }
 
 // FindByClientIdAndClientSecret implements OauthClientRepository
-func (oc *OauthClientRepositoryImpl) FindByClientIdAndClientSecret(clientId string, clientSecret string) (*entity.OauthClient, error) {
+func (repository *OauthClientRepositoryImpl) FindByClientIdAndClientSecret(clientId string, clientSecret string) (*entity.OauthClient, error) {
 	var oauthClient entity.OauthClient
 
-	if err := oc.db.Where("client_id = ?", clientId).Where("client_secret = ?", clientSecret).First(&oauthClient).Error; err != nil {
+	if err := repository.db.Where("client_id = ?", clientId).Where("client_secret = ?", clientSecret).First(&oauthClient).Error; err != nil {
 		return nil, err
 	}
 

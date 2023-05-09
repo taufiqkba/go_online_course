@@ -17,18 +17,18 @@ type OauthAccessTokenRepositoryImpl struct {
 }
 
 // Create implements OauthAccessTokenRepository
-func (oa *OauthAccessTokenRepositoryImpl) Create(oauthAccessToken entity.OauthAccessToken) (*entity.OauthAccessToken, error) {
-	if result := oa.db.Create(oauthAccessToken).Error; result != nil {
-		return nil, result
+func (repository *OauthAccessTokenRepositoryImpl) Create(oauthAccessToken entity.OauthAccessToken) (*entity.OauthAccessToken, error) {
+	if err := repository.db.Create(oauthAccessToken).Error; err != nil {
+		return nil, err
 	}
 
 	return &oauthAccessToken, nil
 }
 
 // Delete implements OauthAccessTokenRepository
-func (oa *OauthAccessTokenRepositoryImpl) Delete(id int) error {
+func (repository *OauthAccessTokenRepositoryImpl) Delete(id int) error {
 	var oauthAccessToken entity.OauthAccessToken
-	if err := oa.db.Delete(&oauthAccessToken, id).Error; err != nil {
+	if err := repository.db.Delete(&oauthAccessToken, id).Error; err != nil {
 		return err
 	}
 	return nil
