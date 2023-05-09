@@ -3,21 +3,21 @@ package usecase
 import (
 	"database/sql"
 	"errors"
-	"github.com/golang-jwt/jwt/v5"
 	"go_online_course/internal/oauth/dto"
 	"go_online_course/internal/oauth/entity"
 	"go_online_course/internal/oauth/repository"
 	"go_online_course/internal/user/usecase"
 	"go_online_course/pkg/utils"
-	"golang.org/x/crypto/bcrypt"
-	_ "golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type OauthUseCase interface {
 	Login(loginRequestBody dto.LoginRequestBody) (*dto.LoginResponse, error)
-	Refresh(refreshTokenRequestBody dto.RefreshTokenRequestBody) (*dto.LoginResponse, error)
+	Refresh(refreshTokenRequestBody *dto.RefreshTokenRequestBody) (*dto.LoginResponse, error)
 }
 
 type OauthUseCaseImpl struct {
@@ -27,19 +27,19 @@ type OauthUseCaseImpl struct {
 	userUseCase                 usecase.UserUseCase
 }
 
+// Login implements OauthUseCase
 func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*dto.LoginResponse, error) {
-	//	check oauth client_id and oauth_client_secret
-	_, err := usecase.oauthClientRepository.FindByClientIdAndClientSecret(loginRequestBody.ClientID, loginRequestBody.ClientSecret)
+	// check oauth client_id and oauth_client_secret
+	oauthClient, err := usecase.oauthClientRepository.FindByClientIdAndClientSecret(loginRequestBody.ClientID, loginRequestBody.ClientSecret)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("username or password is invalid")
 	}
 
 	var user dto.UserResponse
-
-	//	login using user data
 	dataUser, err := usecase.userUseCase.FindByEmail(loginRequestBody.Email)
+
 	if err != nil {
-		return nil, errors.New("username or password is invalid")
+		return nil, err
 	}
 
 	user.ID = dataUser.ID
@@ -48,11 +48,14 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	user.Password = dataUser.Password
 
 	jwtKey := []byte(os.Getenv("JWT_SECRET"))
+
+	// Compare login password valid or not
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequestBody.Password))
 	if err != nil {
 		return nil, errors.New("username or password is invalid")
 	}
-
+	/// CREATE JWT TOKEN STEPS
+	// create Expiration of JWT Token
 	expirationTime := time.Now().Add(24 * 365 * time.Hour)
 
 	claims := &dto.ClaimResponse{
@@ -65,28 +68,31 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 		},
 	}
 
+	// create JWT Token
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	tokenString, err := token.SignedString(jwtKey)
+
 	if err != nil {
 		return nil, err
 	}
 
+	// Insert data into table oauth_access_token
 	dataOauthAccessToken := entity.OauthAccessToken{
-		OauthClient: &OauthClient.ID,
-		UserID:      user.ID,
-		Token:       tokenString,
-		Scope:       "*",
+		OauthClientID: &oauthClient.ID,
+		UserID:        user.ID,
+		Token:         tokenString,
+		Scope:         "*",
 		ExpiredAt: sql.NullTime{
 			Time: expirationTime,
 		},
 	}
 
 	oauthAccessToken, err := usecase.oauthAccessTokenRepository.Create(dataOauthAccessToken)
-
 	if err != nil {
 		return nil, err
 	}
 
+	// insert data to oauth_refresh_token table
 	dataOauthRefreshToken := entity.OauthRefreshToken{
 		OauthAccessTokenID: &oauthAccessToken.ID,
 		UserID:             user.ID,
@@ -101,21 +107,27 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 		return nil, err
 	}
 
+	// return response
 	return &dto.LoginResponse{
 		AccessToken:  tokenString,
-		RefreshToken: oauthRefreshToken,
-		Type:         "",
-		ExpiredAt:    "",
-		Scope:        "",
+		RefreshToken: oauthRefreshToken.Token,
+		Type:         "Bearer",
+		ExpiredAt:    expirationTime.Format(time.RFC3339),
+		Scope:        "*",
 	}, nil
 
 }
 
-func (usecase *OauthUseCaseImpl) Refresh(refreshTokenRequestBody dto.RefreshTokenRequestBody) (*dto.LoginResponse, error) {
-	//TODO implement me
-	panic("implement me")
+// Refresh implements OauthUseCase
+func (usecase *OauthUseCaseImpl) Refresh(refreshTokenRequestBody *dto.RefreshTokenRequestBody) (*dto.LoginResponse, error) {
+	panic("unimplemented")
 }
 
-func NewOauthUseCase() OauthUseCase {
-	return &OauthUseCaseImpl{}
+func NewOauthUseCase(
+	oauthClientRepository repository.OauthClientRepository,
+	oauthAccessTokenRepository repository.OauthAccessTokenRepository,
+	oauthRefreshTokenRepository repository.OauthRefreshTokenRepository,
+	userUseCase usecase.UserUseCase,
+) OauthUseCase {
+	return &OauthUseCaseImpl{oauthClientRepository, oauthAccessTokenRepository, oauthRefreshTokenRepository, userUseCase}
 }
