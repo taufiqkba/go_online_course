@@ -17,7 +17,7 @@ import (
 
 type OauthUseCase interface {
 	Login(loginRequestBody dto.LoginRequestBody) (*dto.LoginResponse, error)
-	Refresh(refreshTokenRequestBody *dto.RefreshTokenRequestBody) (*dto.LoginResponse, error)
+	Refresh(refreshTokenRequestBody dto.RefreshTokenRequestBody) (*dto.LoginResponse, error)
 }
 
 type OauthUseCaseImpl struct {
@@ -32,14 +32,14 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	// check oauth client_id and oauth_client_secret
 	oauthClient, err := usecase.oauthClientRepository.FindByClientIdAndClientSecret(loginRequestBody.ClientID, loginRequestBody.ClientSecret)
 	if err != nil {
-		return nil, errors.New("username or password is invalid")
+		return nil, err
 	}
 
 	var user dto.UserResponse
 	dataUser, err := usecase.userUseCase.FindByEmail(loginRequestBody.Email)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("username or password is invalid")
 	}
 
 	user.ID = dataUser.ID
@@ -54,6 +54,7 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	if err != nil {
 		return nil, errors.New("username or password is invalid")
 	}
+
 	/// CREATE JWT TOKEN STEPS
 	// create Expiration of JWT Token
 	expirationTime := time.Now().Add(24 * 365 * time.Hour)
@@ -69,14 +70,14 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	}
 
 	// create JWT Token
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 
 	if err != nil {
 		return nil, err
 	}
 
-	// Insert data into table oauth_access_token
+	// insert data to table oauth_access_token
 	dataOauthAccessToken := entity.OauthAccessToken{
 		OauthClientID: &oauthClient.ID,
 		UserID:        user.ID,
@@ -88,6 +89,7 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	}
 
 	oauthAccessToken, err := usecase.oauthAccessTokenRepository.Create(dataOauthAccessToken)
+
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +105,7 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 	}
 
 	oauthRefreshToken, err := usecase.oauthRefreshTokenRepository.Create(dataOauthRefreshToken)
+
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +122,7 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 }
 
 // Refresh implements OauthUseCase
-func (usecase *OauthUseCaseImpl) Refresh(refreshTokenRequestBody *dto.RefreshTokenRequestBody) (*dto.LoginResponse, error) {
+func (usecase *OauthUseCaseImpl) Refresh(refreshTokenRequestBody dto.RefreshTokenRequestBody) (*dto.LoginResponse, error) {
 	panic("unimplemented")
 }
 

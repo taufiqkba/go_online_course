@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"go_online_course/internal/oauth/entity"
 
 	"gorm.io/gorm"
@@ -18,7 +19,9 @@ type OauthAccessTokenRepositoryImpl struct {
 
 // Create implements OauthAccessTokenRepository
 func (repository *OauthAccessTokenRepositoryImpl) Create(oauthAccessToken entity.OauthAccessToken) (*entity.OauthAccessToken, error) {
-	if err := repository.db.Create(oauthAccessToken).Error; err != nil {
+	if err := repository.db.Create(&oauthAccessToken).Error; err != nil {
+		fmt.Print(err)
+
 		return nil, err
 	}
 
@@ -28,12 +31,14 @@ func (repository *OauthAccessTokenRepositoryImpl) Create(oauthAccessToken entity
 // Delete implements OauthAccessTokenRepository
 func (repository *OauthAccessTokenRepositoryImpl) Delete(id int) error {
 	var oauthAccessToken entity.OauthAccessToken
+
 	if err := repository.db.Delete(&oauthAccessToken, id).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func NewOauthAccessTokenRepository() OauthAccessTokenRepository {
-	return &OauthAccessTokenRepositoryImpl{}
+func NewOauthAccessTokenRepository(db *gorm.DB) OauthAccessTokenRepository {
+	return &OauthAccessTokenRepositoryImpl{db}
 }
