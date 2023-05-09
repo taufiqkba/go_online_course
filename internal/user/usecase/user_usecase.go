@@ -6,6 +6,7 @@ import (
 	"go_online_course/internal/user/entity"
 	"go_online_course/internal/user/repository"
 	"go_online_course/pkg/utils"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -23,23 +24,10 @@ type UserUseCaseImpl struct {
 	repository repository.UserRepository
 }
 
-func NewUserUseCase(repository repository.UserRepository) *UserUseCaseImpl {
-	return &UserUseCaseImpl{repository}
-}
-
-func (uu UserUseCaseImpl) FindAll(offset int, limit int) []entity.User {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (uu UserUseCaseImpl) FindById(id int) (*entity.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (uu UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.User, error) {
+// Create implements UserUseCase
+func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.User, error) {
 	//	Find by email
-	checkUser, err := uu.repository.FindByEmail(*userDto.Email)
+	checkUser, err := usecase.repository.FindByEmail(*userDto.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -59,19 +47,38 @@ func (uu UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.User, err
 		Password:     string(hashedPassword),
 		CodeVerified: utils.RandomString(12),
 	}
-	dataUser, err := uu.repository.Create(user)
+	dataUser, err := usecase.repository.Create(user)
 	if err != nil {
 		return nil, err
 	}
 	return dataUser, nil
 }
 
-func (uu UserUseCaseImpl) Update(userDto dto.UserRequestBody) (*entity.User, error) {
-	//TODO implement me
-	panic("implement me")
+// Delete implements UserUseCase
+func (usecase *UserUseCaseImpl) Delete(id int) error {
+	panic("unimplemented")
 }
 
-func (uu UserUseCaseImpl) Delete(id int) error {
-	//TODO implement me
-	panic("implement me")
+// FindAll implements UserUseCase
+func (usecase *UserUseCaseImpl) FindAll(offset int, limit int) []entity.User {
+	panic("unimplemented")
+}
+
+// FindByEmail implements UserUseCase
+func (usecase *UserUseCaseImpl) FindByEmail(email string) (*entity.User, error) {
+	return usecase.repository.FindByEmail(email)
+}
+
+// FindById implements UserUseCase
+func (usecase *UserUseCaseImpl) FindById(id int) (*entity.User, error) {
+	panic("unimplemented")
+}
+
+// Update implements UserUseCase
+func (usecase *UserUseCaseImpl) Update(userDto dto.UserRequestBody) (*entity.User, error) {
+	panic("unimplemented")
+}
+
+func NewUserUseCase(repository repository.UserRepository) UserUseCase {
+	return &UserUseCaseImpl{repository}
 }
