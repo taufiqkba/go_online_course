@@ -18,22 +18,22 @@ type Header struct {
 func AuthJwt(ctx *gin.Context) {
 	var input Header
 
-	if err := ctx.ShouldBindHeader(input); err != nil {
+	if err := ctx.ShouldBindHeader(&input); err != nil {
 		ctx.JSON(http.StatusUnauthorized, utils.Response(http.StatusUnauthorized, "unauthorized", err.Error()))
 		ctx.Abort()
 		return
 	}
 
 	reqToken := input.Authorization
-	if len(reqToken) != 2 {
-		ctx.JSON(http.StatusUnauthorized, utils.Response(http.StatusUnauthorized, "unauthorized", err.Error()))
+	splitToken := strings.Split(reqToken, "Bearer ")
+
+	if len(splitToken) != 2 {
+		ctx.JSON(http.StatusUnauthorized, utils.Response(http.StatusUnauthorized, "unauthorized", "unauthorized"))
 		ctx.Abort()
 		return
 	}
-	splitToken := strings.Split(reqToken, "Bearer")
 
 	reqToken = splitToken[1]
-
 	claims := &dto.MapClaimResponse{}
 
 	token, err := jwt.ParseWithClaims(reqToken, claims, func(t *jwt.Token) (interface{}, error) {

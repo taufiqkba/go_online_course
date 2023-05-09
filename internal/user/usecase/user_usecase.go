@@ -71,7 +71,7 @@ func (usecase *UserUseCaseImpl) FindByEmail(email string) (*entity.User, error) 
 
 // FindById implements UserUseCase
 func (usecase *UserUseCaseImpl) FindById(id int) (*entity.User, error) {
-	panic("unimplemented")
+	return usecase.repository.FindById(id)
 }
 
 // Update implements UserUseCase
