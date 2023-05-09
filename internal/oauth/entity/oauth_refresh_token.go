@@ -2,11 +2,9 @@ package entity
 
 import (
 	"database/sql"
-	"gorm.io/gorm"
 )
 
 type OauthRefreshToken struct {
-	gorm.Model
 	ID                 int64             `json:"id"`
 	OauthAccessToken   *OauthAccessToken `gorm:"foreignKey:OauthAccessTokenID;references:ID"`
 	OauthAccessTokenID *int64            `json:"oauth_access_token_id"`
