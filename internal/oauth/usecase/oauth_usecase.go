@@ -3,6 +3,7 @@ package usecase
 import (
 	"database/sql"
 	"errors"
+	usecase2 "go_online_course/internal/admin/usecase"
 	"go_online_course/internal/oauth/dto"
 	"go_online_course/internal/oauth/entity"
 	"go_online_course/internal/oauth/repository"
@@ -25,6 +26,7 @@ type OauthUseCaseImpl struct {
 	oauthAccessTokenRepository  repository.OauthAccessTokenRepository
 	oauthRefreshTokenRepository repository.OauthRefreshTokenRepository
 	userUseCase                 usecase.UserUseCase
+	adminUseCase usecase2.AdminUseCase
 }
 
 // Login implements OauthUseCase
@@ -35,6 +37,16 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 		return nil, err
 	}
 
+
+	//Login Admin
+	if oauthClient.Name == "web-admin" {
+		dataAdmin, err := usecase.adminUseCase.FindByEmail(loginRequestBody.Email)
+		if err != nil{
+			return nil, errors.New("email or password is invalid")
+		}
+	}
+
+	//Login User
 	var user dto.UserResponse
 	dataUser, err := usecase.userUseCase.FindByEmail(loginRequestBody.Email)
 
@@ -131,6 +143,12 @@ func NewOauthUseCase(
 	oauthAccessTokenRepository repository.OauthAccessTokenRepository,
 	oauthRefreshTokenRepository repository.OauthRefreshTokenRepository,
 	userUseCase usecase.UserUseCase,
+	adminUseCase usecase2.AdminUseCase
+
 ) OauthUseCase {
-	return &OauthUseCaseImpl{oauthClientRepository, oauthAccessTokenRepository, oauthRefreshTokenRepository, userUseCase}
+	return &OauthUseCaseImpl{oauthClientRepository,
+		oauthAccessTokenRepository,
+		oauthRefreshTokenRepository,
+		userUseCase,
+	adminUseCase}
 }
