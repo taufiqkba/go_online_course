@@ -6,7 +6,6 @@
 - Initialize serveral Go modules:
   - [Gin](https://github.com/gin-gonic/gin)
   - [Gorm](https://gorm.io/)
-  - [Wire](https://github.com/google/wire)
   - [Migration](https://github.com/golang-migrate/migrate)
   - [Air Load](https://github.com/cosmtrek/air)
 - Analysis Database Table Design & Relationship
@@ -20,3 +19,9 @@
   - [SendGrid](https://github.com/sendgrid/sendgrid-go)
 - Register user service
 - Implementation SendGrid email service
+
+### DAY 3
+
+- Oauth login service
+- Get profile service
+- Refactor code implement Dependency Injection using Google [Wire](https://github.com/google/wire) library
