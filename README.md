@@ -20,3 +20,9 @@
   - [SendGrid](https://github.com/sendgrid/sendgrid-go)
 - Register user service
 - Implementation SendGrid email service
+
+### DAY 4
+
+- Implement Auth Login Admin service
+- Implement Create, Read, Update, Delete Admin service
+- Implement Product Category service
