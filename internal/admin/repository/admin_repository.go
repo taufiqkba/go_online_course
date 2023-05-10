@@ -21,17 +21,29 @@ type AdminRepositoryImpl struct {
 
 // Create implements AdminRepository
 func (repository *AdminRepositoryImpl) Create(entity entity.Admin) (*entity.Admin, error) {
-	panic("unimplemented")
+
+	if err := repository.db.Create(&entity).Error; err != nil {
+		return nil, err
+	}
+	return &entity, nil
 }
 
 // Delete implements AdminRepository
 func (repository *AdminRepositoryImpl) Delete(entity entity.Admin) error {
-	panic("unimplemented")
+
+	if err := repository.db.Save(&entity).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 // FindAll implements AdminRepository
 func (repository *AdminRepositoryImpl) FindAll(offset int, limit int) []entity.Admin {
-	panic("unimplemented")
+	var admins []entity.Admin
+
+	repository.db.Find(&admins)
+	return admins
+
 }
 
 // FindByEmail implements AdminRepository
@@ -46,12 +58,21 @@ func (repository *AdminRepositoryImpl) FindByEmail(email string) (*entity.Admin,
 
 // FindById implements AdminRepository
 func (repository *AdminRepositoryImpl) FindById(id int) (*entity.Admin, error) {
-	panic("unimplemented")
+	var admin entity.Admin
+
+	if err := repository.db.Find(&admin, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &admin, nil
 }
 
 // Update implements AdminRepository
 func (repository *AdminRepositoryImpl) Update(entity entity.Admin) (*entity.Admin, error) {
-	panic("unimplemented")
+	if err := repository.db.Save(&entity).Error; err != nil {
+		return nil, err
+	}
+	return &entity, nil
 }
 
 func NewAdminRepository(db *gorm.DB) AdminRepository {
