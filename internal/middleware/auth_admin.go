@@ -1,9 +1,10 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"go_online_course/pkg/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func AuthAdmin(ctx *gin.Context) {
@@ -14,5 +15,5 @@ func AuthAdmin(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	//	TODO return middleware Auth Admin
+	ctx.Next()
 }
