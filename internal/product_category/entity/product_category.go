@@ -3,6 +3,7 @@ package entity
 import (
 	"database/sql"
 	"go_online_course/internal/admin/entity"
+
 	"gorm.io/gorm"
 )
 
