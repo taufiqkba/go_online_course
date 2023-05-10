@@ -25,3 +25,9 @@
 - Oauth login service
 - Get profile service
 - Refactor code implement Dependency Injection using Google [Wire](https://github.com/google/wire) library
+
+### DAY 4
+
+- Implement Auth Login Admin service
+- Implement Create, Read, Update, Delete Admin service
+- Implement Product Category service
