@@ -12,7 +12,7 @@ type ProductCategoryRepository interface {
 	FindByID(id int) (*entity.ProductCategory, error)
 	Create(entity entity.ProductCategory) (*entity.ProductCategory, error)
 	Update(entity entity.ProductCategory) (*entity.ProductCategory, error)
-	Delete(id int) error
+	Delete(entity entity.ProductCategory) error
 }
 
 type ProductCategoryRepositoryImpl struct {
@@ -28,8 +28,8 @@ func (repository *ProductCategoryRepositoryImpl) Create(entity entity.ProductCat
 }
 
 // Delete implements ProductCategoryRepository
-func (repository *ProductCategoryRepositoryImpl) Delete(id int) error {
-	if err := repository.db.Delete(id).Error; err != nil {
+func (repository *ProductCategoryRepositoryImpl) Delete(entity entity.ProductCategory) error {
+	if err := repository.db.Delete(&entity).Error; err != nil {
 		return err
 	}
 	return nil
