@@ -26,7 +26,7 @@ type OauthUseCaseImpl struct {
 	oauthAccessTokenRepository  repository.OauthAccessTokenRepository
 	oauthRefreshTokenRepository repository.OauthRefreshTokenRepository
 	userUseCase                 usecase.UserUseCase
-	adminUseCase usecase2.AdminUseCase
+	adminUseCase                usecase2.AdminUseCase
 }
 
 // Login implements OauthUseCase
@@ -37,27 +37,31 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 		return nil, err
 	}
 
+	var user dto.UserResponse
 
-	//Login Admin
+	///CHECK LOGIN ADMIN
 	if oauthClient.Name == "web-admin" {
 		dataAdmin, err := usecase.adminUseCase.FindByEmail(loginRequestBody.Email)
-		if err != nil{
+		if err != nil {
 			return nil, errors.New("email or password is invalid")
 		}
+		user.ID = dataAdmin.ID
+		user.Email = dataAdmin.Email
+		user.Password = dataAdmin.Password
+
+	} else {
+		//CHECK LOGIN USER
+		dataUser, err := usecase.userUseCase.FindByEmail(loginRequestBody.Email)
+
+		if err != nil {
+			return nil, errors.New("username or password is invalid")
+		}
+
+		user.ID = dataUser.ID
+		user.Name = dataUser.Name
+		user.Email = dataUser.Email
+		user.Password = dataUser.Password
 	}
-
-	//Login User
-	var user dto.UserResponse
-	dataUser, err := usecase.userUseCase.FindByEmail(loginRequestBody.Email)
-
-	if err != nil {
-		return nil, errors.New("username or password is invalid")
-	}
-
-	user.ID = dataUser.ID
-	user.Name = dataUser.Name
-	user.Email = dataUser.Email
-	user.Password = dataUser.Password
 
 	jwtKey := []byte(os.Getenv("JWT_SECRET"))
 
@@ -73,12 +77,16 @@ func (usecase *OauthUseCaseImpl) Login(loginRequestBody dto.LoginRequestBody) (*
 
 	claims := &dto.ClaimResponse{
 		ID:      user.ID,
-		Name:    user.Name,
 		Email:   user.Email,
-		IsAdmin: false,
+		Name:    user.Name,
+		IsAdmin: true,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
+	}
+
+	if oauthClient.Name != "web-admin" {
+		claims.IsAdmin = false
 	}
 
 	// create JWT Token
@@ -143,12 +151,13 @@ func NewOauthUseCase(
 	oauthAccessTokenRepository repository.OauthAccessTokenRepository,
 	oauthRefreshTokenRepository repository.OauthRefreshTokenRepository,
 	userUseCase usecase.UserUseCase,
-	adminUseCase usecase2.AdminUseCase
-
+	adminUseCase usecase2.AdminUseCase,
 ) OauthUseCase {
-	return &OauthUseCaseImpl{oauthClientRepository,
+	return &OauthUseCaseImpl{
+		oauthClientRepository,
 		oauthAccessTokenRepository,
 		oauthRefreshTokenRepository,
 		userUseCase,
-	adminUseCase}
+		adminUseCase,
+	}
 }
