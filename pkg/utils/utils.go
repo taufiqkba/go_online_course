@@ -5,6 +5,7 @@ import (
 	"go_online_course/internal/oauth/dto"
 	"gorm.io/gorm"
 	"math/rand"
+	"path/filepath"
 )
 
 func RandomString(number int) string {
@@ -44,7 +45,8 @@ func GetCurrentUser(ctx *gin.Context) *dto.MapClaimResponse {
 	return user.(*dto.MapClaimResponse)
 }
 
-func GetFileName(filename string) string {
-	//file := filepath.Base(filename)
-	//return file
+func GetFileName(fileName string) string {
+	file := filepath.Base(fileName)
+
+	return file[:len(file)-len(filepath.Ext(file))]
 }
