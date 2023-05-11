@@ -41,10 +41,10 @@ func CreateProductResponse(product entity3.Product) ProductResponseBody {
 
 type ProductListResponse []ProductResponseBody
 
-func CreateProductListResponse(product []entity3.Product) ProductListResponse {
+func CreateProductListResponse(products []entity3.Product) ProductListResponse {
 	productResp := ProductListResponse{}
 
-	for _, p := range product {
+	for _, p := range products {
 		product := CreateProductResponse(p)
 		productResp = append(productResp, product)
 	}
