@@ -18,45 +18,29 @@ type ProductUseCaseImpl struct {
 	repository repository.ProductRepository
 }
 
-func (p ProductUseCaseImpl) FindAll(offset int, limit int) []entity3.Product {
-	return p.repository.FindAll(offset, limit)
+func (usecase *ProductUseCaseImpl) FindAll(offset int, limit int) []entity3.Product {
+	return usecase.repository.FindAll(offset, limit)
 }
 
-func (p ProductUseCaseImpl) FindById(id int) (*entity3.Product, error) {
-	return p.repository.FindById(id)
+func (usecase *ProductUseCaseImpl) FindById(id int) (*entity3.Product, error) {
+	return usecase.repository.FindById(id)
 }
 
-func (p ProductUseCaseImpl) Create(dto dto.ProductRequestBody) (*entity3.Product, error) {
+func (usecase *ProductUseCaseImpl) Create(dto dto.ProductRequestBody) (*entity3.Product, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (p ProductUseCaseImpl) Update(id int, dto dto.ProductRequestBody) (*entity3.Product, error) {
-	//	find product data by id
-	product, err := p.repository.FindById(id)
-	if err != nil {
-		return nil, err
-	}
-
-	product.Title = dto.Title
-	product.Description = dto.Description
-	product.Price = dto.Price
-
-	//	if file image is available
-	if dto.Image != nil {
-		//	TODO IMPLEMENT ME
-	}
-
-	if dto.Video != nil {
-		//	TODO IMPLEMENT ME
-	}
+func (usecase *ProductUseCaseImpl) Update(id int, dto dto.ProductRequestBody) (*entity3.Product, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (p ProductUseCaseImpl) Delete(id int) error {
+func (usecase *ProductUseCaseImpl) Delete(id int) error {
 	//TODO implement me
 	panic("implement me")
 }
 
 func NewProductUseCase(repository repository.ProductRepository) ProductUseCase {
-	return &ProductUseCaseImpl{repository}
+	return &ProductUseCaseImpl{repository: repository}
 }
