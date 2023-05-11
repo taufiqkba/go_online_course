@@ -19,6 +19,22 @@ type FileUpload interface {
 type FileUploadImpl struct {
 }
 
+func (fileUploadImpl *FileUploadImpl) Delete(fileName string) (*string, error) {
+	//connect to cloudinary
+	cld, err := cloudinary.NewFromURL("cloudinary://" + os.Getenv("CLOUDINARY_APIKEY") + ":" + os.Getenv("CLOUDINARY_SECRET") + "@" + os.Getenv("CLOUDINARY_CLOUD_NAME"))
+
+	if err != nil {
+		return nil, err
+	}
+	var ctx = context.Background()
+	fileName = utils.GetFileName(fileName)
+	resp, err := cld.Upload.Destroy(ctx, uploader.DestroyParams{PublicID: fileName})
+	if err != nil {
+		return nil, err
+	}
+	return &resp.Result, nil
+}
+
 func (fileUploadImpl *FileUploadImpl) Upload(file multipart.FileHeader) (*string, error) {
 	//connect to cloudinary
 	cld, err := cloudinary.NewFromURL("cloudinary://" + os.Getenv("CLOUDINARY_APIKEY") + ":" + os.Getenv("CLOUDINARY_SECRET") + "@" + os.Getenv("CLOUDINARY_CLOUD_NAME"))
@@ -47,22 +63,6 @@ func (fileUploadImpl *FileUploadImpl) Upload(file multipart.FileHeader) (*string
 		return &uploadResult.SecureURL, nil
 	}
 	return nil, errors.New("file upload format does not match")
-}
-
-func (fileUploadImpl *FileUploadImpl) Delete(fileName string) (*string, error) {
-	//connect to cloudinary
-	cld, err := cloudinary.NewFromURL("cloudinary://" + os.Getenv("CLOUDINARY_APIKEY") + ":" + os.Getenv("CLOUDINARY_SECRET") + "@" + os.Getenv("CLOUDINARY_CLOUD_NAME"))
-
-	if err != nil {
-		return nil, err
-	}
-	var ctx = context.Background()
-	fileName = utils.GetFileName(fileName)
-	resp, err := cld.Upload.Destroy(ctx, uploader.DestroyParams{PublicID: fileName})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Result, nil
 }
 
 func NewFileUpload() FileUpload {

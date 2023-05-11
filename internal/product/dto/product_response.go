@@ -27,8 +27,8 @@ func CreateProductResponse(product entity3.Product) ProductResponseBody {
 	return ProductResponseBody{
 		ProductCategory: product.ProductCategory,
 		Title:           product.Title,
-		Image:           product.Image,
-		Video:           product.Video,
+		Image:           *product.Image,
+		Video:           *product.Video,
 		Description:     product.Description,
 		Price:           product.Price,
 		CratedBy:        product.CreatedBy,
