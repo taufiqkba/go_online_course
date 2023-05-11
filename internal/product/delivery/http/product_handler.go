@@ -79,7 +79,7 @@ func (handler *ProductHandler) Update(ctx *gin.Context) {
 
 	var input dto.ProductRequestBody
 	if err := ctx.ShouldBind(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", "bad request"))
+		ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", err.Error()))
 		ctx.Abort()
 		return
 	}

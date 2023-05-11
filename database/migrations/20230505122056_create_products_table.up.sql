@@ -14,7 +14,7 @@ CREATE TABLE products (
     PRIMARY KEY(id),
     INDEX idx_products_created_by(created_by),
     INDEX idx_products_updated_by(updated_by),
-    CONSTRAINT FK_product_product_category_id FOREIGN KEY (product_category_id) REFERENCES admins(id) ON DELETE SET NULL,
+    CONSTRAINT FK_product_product_category_id FOREIGN KEY (product_category_id) REFERENCES products(id) ON DELETE SET NULL,
     CONSTRAINT FK_product_created_by FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL,
     CONSTRAINT FK_product_updated_by FOREIGN KEY (updated_by) REFERENCES admins(id) ON DELETE SET NULL
 )
