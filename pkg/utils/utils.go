@@ -1,11 +1,10 @@
 package utils
 
 import (
+	"github.com/gin-gonic/gin"
 	"go_online_course/internal/oauth/dto"
 	"gorm.io/gorm"
 	"math/rand"
-
-	"github.com/gin-gonic/gin"
 )
 
 func RandomString(number int) string {
@@ -43,4 +42,9 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 func GetCurrentUser(ctx *gin.Context) *dto.MapClaimResponse {
 	user, _ := ctx.Get("user")
 	return user.(*dto.MapClaimResponse)
+}
+
+func GetFileName(filename string) string {
+	//file := filepath.Base(filename)
+	//return file
 }
