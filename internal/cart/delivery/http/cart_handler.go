@@ -42,20 +42,24 @@ func (handler *CartHandler) FindByUserID(ctx *gin.Context) {
 func (handler *CartHandler) Create(ctx *gin.Context) {
 	var input dto.CartRequestBody
 
-	err := ctx.ShouldBindJSON(&input)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", err.Error()))
 		ctx.Abort()
 		return
 	}
+
 	user := utils.GetCurrentUser(ctx)
+
 	input.UserID = user.ID
+
 	data, err := handler.usecase.Create(input)
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.Response(http.StatusInternalServerError, "internal server error", err.Error()))
 		ctx.Abort()
 		return
 	}
+
 	ctx.JSON(http.StatusCreated, utils.Response(http.StatusCreated, "created", data))
 
 }

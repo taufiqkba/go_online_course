@@ -14,6 +14,7 @@ type Product struct {
 	Title             string                  `json:"title"`
 	Image             *string                 `json:"image"`
 	Video             *string                 `json:"video"`
+	VideoURL          *string                 `json:"video_url,omitempty"`
 	Description       string                  `json:"description"`
 	Price             int64                   `json:"price"`
 	CreatedByID       int64                   `json:"created_by" gorm:"column:created_by"`
