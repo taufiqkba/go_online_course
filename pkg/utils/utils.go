@@ -50,3 +50,9 @@ func GetFileName(fileName string) string {
 
 	return file[:len(file)-len(filepath.Ext(file))]
 }
+
+func PanicIfError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
