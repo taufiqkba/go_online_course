@@ -31,3 +31,9 @@
 - Implement Auth Login Admin service
 - Implement Create, Read, Update, Delete Admin service
 - Implement Product Category service
+
+### DAY 5
+
+- Implement connection to Cloudinary
+- Product Service
+- Cart service
