@@ -26,6 +26,7 @@ func (usecase *CartUseCaseImpl) FindByID(id int) (*entity.Cart, error) {
 	return usecase.repository.FindByID(id)
 }
 
+// Create implements CartUseCase
 func (usecase *CartUseCaseImpl) Create(dto dto.CartRequestBody) (*entity.Cart, error) {
 	cart := entity.Cart{
 		UserID:    dto.UserID,

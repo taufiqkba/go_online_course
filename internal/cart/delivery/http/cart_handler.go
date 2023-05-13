@@ -71,5 +71,5 @@ func (handler *CartHandler) Delete(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	ctx.JSON(http.StatusOK, utils.Response(http.StatusOK, "ok", "success"))
+	ctx.JSON(http.StatusOK, utils.Response(http.StatusOK, "ok", "ok"))
 }
