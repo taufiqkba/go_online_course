@@ -5,5 +5,5 @@ type UserRequestBody struct {
 	Email     *string `json:"email" binding:"required"`
 	Password  *string `json:"password"`
 	CreatedBy *int64  `json:"created_by"`
-	UpdatedBy *int    `json:"updated_by"`
+	UpdatedBy *int64  `json:"updated_by"`
 }

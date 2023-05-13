@@ -16,7 +16,7 @@ type UserUseCase interface {
 	FindById(id int) (*entity.User, error)
 	FindByEmail(email string) (*entity.User, error)
 	Create(userDto dto.UserRequestBody) (*entity.User, error)
-	Update(userDto dto.UserRequestBody) (*entity.User, error)
+	Update(id int, dto dto.UserRequestBody) (*entity.User, error)
 	Delete(id int) error
 }
 
@@ -47,6 +47,10 @@ func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.Use
 		Password:     string(hashedPassword),
 		CodeVerified: utils.RandomString(12),
 	}
+	if userDto.CreatedBy != nil {
+		user.CreatedById = userDto.CreatedBy
+	}
+
 	dataUser, err := usecase.repository.Create(user)
 	if err != nil {
 		return nil, err
@@ -56,12 +60,13 @@ func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.Use
 
 // Delete implements UserUseCase
 func (usecase *UserUseCaseImpl) Delete(id int) error {
+	//TODO Implement me
 	panic("unimplemented")
 }
 
 // FindAll implements UserUseCase
 func (usecase *UserUseCaseImpl) FindAll(offset int, limit int) []entity.User {
-	panic("unimplemented")
+	return usecase.repository.FindAll(offset, limit)
 }
 
 // FindByEmail implements UserUseCase
@@ -75,8 +80,36 @@ func (usecase *UserUseCaseImpl) FindById(id int) (*entity.User, error) {
 }
 
 // Update implements UserUseCase
-func (usecase *UserUseCaseImpl) Update(userDto dto.UserRequestBody) (*entity.User, error) {
-	panic("unimplemented")
+func (usecase *UserUseCaseImpl) Update(id int, dto dto.UserRequestBody) (*entity.User, error) {
+	user, err := usecase.repository.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+	if dto.Name != nil {
+		user.Name = *dto.Name
+	}
+	if dto.Email != nil {
+		if user.Email != *dto.Email {
+			user.Email = *dto.Email
+		}
+	}
+
+	if dto.Password != nil {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*dto.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	if dto.UpdatedBy != nil {
+		user.UpdatedById = dto.UpdatedBy
+	}
+	updateUser, err := usecase.repository.Update(*user)
+	if err != nil {
+		return nil, err
+	}
+	return updateUser, nil
 }
 
 func NewUserUseCase(repository repository.UserRepository) UserUseCase {

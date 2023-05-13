@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_online_course/internal/user/entity"
+	"go_online_course/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -26,13 +27,13 @@ func (ur UserRepositoryImpl) FindByEmail(email string) (*entity.User, error) {
 	return &user, nil
 }
 
-func NewUserRepositoryImpl(db *gorm.DB) UserRepository {
+func NewUserRepository(db *gorm.DB) UserRepository {
 	return &UserRepositoryImpl{db}
 }
 
 func (ur UserRepositoryImpl) FindAll(offset int, limit int) []entity.User {
 	var users []entity.User
-	ur.db.Find(&users)
+	ur.db.Scopes(utils.Paginate(offset, limit)).Find(&users)
 	return users
 }
 
