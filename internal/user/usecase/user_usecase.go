@@ -48,7 +48,7 @@ func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.Use
 		CodeVerified: utils.RandomString(12),
 	}
 	if userDto.CreatedBy != nil {
-		user.CreatedById = userDto.CreatedBy
+		user.CreatedByID = userDto.CreatedBy
 	}
 
 	dataUser, err := usecase.repository.Create(user)
@@ -103,7 +103,7 @@ func (usecase *UserUseCaseImpl) Update(id int, dto dto.UserRequestBody) (*entity
 	}
 
 	if dto.UpdatedBy != nil {
-		user.UpdatedById = dto.UpdatedBy
+		user.UpdatedByID = dto.UpdatedBy
 	}
 	updateUser, err := usecase.repository.Update(*user)
 	if err != nil {

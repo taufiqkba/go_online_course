@@ -13,7 +13,7 @@ type User struct {
 	Password        string         `json:"-"`
 	CodeVerified    string         `json:"-"`
 	EmailVerifiedAt sql.NullTime   `json:"email_verified_at"`
-	CreatedByID     int64          `json:"created_by" gorm:"column:created_by"`
+	CreatedByID     *int64         `json:"created_by" gorm:"column:created_by"`
 	CreatedBy       *entity2.Admin `json:"-" gorm:"foreignKey:CreatedByID;references:ID"`
 	UpdatedByID     *int64         `json:"updated_by" gorm:"column:updated_by"`
 	UpdatedBy       *entity2.Admin `json:"-" gorm:"foreignKey:UpdatedByID;references:ID"`
