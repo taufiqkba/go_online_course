@@ -10,10 +10,19 @@ type OrderRepository interface {
 	FindAll(offset int, limit int) []entity.Order
 	FindByID(id int) (*entity.Order, error)
 	Create(entity entity.Order) (*entity.Order, error)
+	Update(entity entity.Order) (*entity.Order, error)
 }
 
 type OrderRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (repository *OrderRepositoryImpl) Update(entity entity.Order) (*entity.Order, error) {
+	err := repository.db.Save(entity).Error
+	if err != nil {
+		return nil, err
+	}
+	return &entity, nil
 }
 
 func (repository *OrderRepositoryImpl) FindAll(offset int, limit int) []entity.Order {
