@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type DiscountEntity struct {
+type Discount struct {
 	ID                int64          `json:"id"`
 	Name              string         `json:"name"`
 	Code              string         `json:"code"`
@@ -16,7 +16,7 @@ type DiscountEntity struct {
 	Value             int64          `json:"value"`
 	StartDate         sql.NullTime   `json:"start_date"`
 	EndDate           sql.NullTime   `json:"end_date"`
-	CreatedByID       int64          `json:"created_by" gorm:"column:created_by"`
+	CreatedByID       *int64         `json:"created_by" gorm:"column:created_by"`
 	CreatedBy         *entity.Admin  `json:"-" gorm:"foreignKey:CreatedByID;references:ID"`
 	UpdatedByID       *int64         `json:"updated_by" gorm:"column:updated_by"`
 	UpdatedBy         *entity.Admin  `json:"-" gorm:"foreignKey:UpdatedByID;references:ID"`
