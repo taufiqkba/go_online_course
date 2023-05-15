@@ -11,6 +11,8 @@ import (
 	"go_online_course/internal/order/repository"
 	entity4 "go_online_course/internal/order_detail/entity"
 	usecase4 "go_online_course/internal/order_detail/usecase"
+	dto2 "go_online_course/internal/payment/dto"
+	usecase5 "go_online_course/internal/payment/usecase"
 	entity3 "go_online_course/internal/product/entity"
 	usecase3 "go_online_course/internal/product/usecase"
 	"strconv"
@@ -28,6 +30,7 @@ type OrderUseCaseImpl struct {
 	discountUseCase    usecase2.DiscountUseCase
 	productUseCase     usecase3.ProductUseCase
 	orderDetailUseCase usecase4.OrderDetailUseCase
+	paymentUseCase     usecase5.PaymentUseCase
 }
 
 func (useCase *OrderUseCaseImpl) FindAll(offset int, limit int) []entity.Order {
@@ -131,6 +134,33 @@ func (useCase *OrderUseCaseImpl) Create(dto dto.OrderRequestBody) (*entity.Order
 		useCase.orderDetailUseCase.Create(orderDetail)
 	}
 	//	hit to xendit payment gateway
+	dataPayment := dto2.PaymentRequestBody{
+		ExternalID:  externalId,
+		Amount:      data.TotalPrice,
+		PayerEmail:  dto.Email,
+		Description: description,
+	}
+
+	payment, err := useCase.paymentUseCase.Create(dataPayment)
+	if err != nil {
+		return nil, err
+	}
+	data.CheckoutLink = payment.InvoiceURL
+	useCase.repository.Update(*data)
+	//	Update RemainingQuantityDiscount
+	if dto.DiscountCode != nil {
+		_, err := useCase.discountUseCase.UpdateRemainingQuantity(int(dataDiscount.ID), 1, "-")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	//	delete carts while checkout success
+	err = useCase.cartUseCase.DeleteByUserID(int(dto.UserID))
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 func NewOrderUseCase(
@@ -139,6 +169,7 @@ func NewOrderUseCase(
 	discountUseCase usecase2.DiscountUseCase,
 	productUseCase usecase3.ProductUseCase,
 	orderDetailUseCase usecase4.OrderDetailUseCase,
+	paymentUseCase usecase5.PaymentUseCase,
 ) OrderUseCase {
 	return &OrderUseCaseImpl{
 		repository:         repository,
@@ -146,5 +177,6 @@ func NewOrderUseCase(
 		discountUseCase:    discountUseCase,
 		productUseCase:     productUseCase,
 		orderDetailUseCase: orderDetailUseCase,
+		paymentUseCase:     paymentUseCase,
 	}
 }
