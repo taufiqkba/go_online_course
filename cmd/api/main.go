@@ -3,7 +3,9 @@ package main
 import (
 	admin "go_online_course/internal/admin/injector"
 	cart "go_online_course/internal/cart/injector"
+	discount "go_online_course/internal/discount/injector"
 	oauth "go_online_course/internal/oauth/injector"
+	order "go_online_course/internal/order/injector"
 	product "go_online_course/internal/product/injector"
 	productCategory "go_online_course/internal/product_category/injector"
 	profile "go_online_course/internal/profile/injector"
@@ -24,6 +26,8 @@ func main() {
 	productCategory.InitializedService(db).Route(&r.RouterGroup)
 	product.InitializedServices(db).Route(&r.RouterGroup)
 	cart.InitializedService(db).Route(&r.RouterGroup)
+	discount.InitializeService(db).Route(&r.RouterGroup)
+	order.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run() //0.0.0.0:8080
 }

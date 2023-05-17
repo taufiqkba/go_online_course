@@ -31,3 +31,15 @@
 - Implement Auth Login Admin service
 - Implement Create, Read, Update, Delete Admin service
 - Implement Product Category service
+
+### DAY 5
+
+- Implement connection to Cloudinary
+- Product Service
+- Cart service
+
+### DAY 6
+
+- Implement order_discount service
+- Create Order services
+- Integration to Xendit Payment Gateway
