@@ -67,14 +67,14 @@ func (useCase *OrderUseCaseImpl) Create(dto dto.OrderRequestBody) (*entity.Order
 
 	//	check discount
 	if dto.DiscountCode != nil {
-		dataDiscount, err := useCase.discountUseCase.FindByCode(*dto.DiscountCode)
+		discount, err := useCase.discountUseCase.FindByCode(*dto.DiscountCode)
 		if err != nil {
 			return nil, errors.New("discount is invalid")
 		}
-		if dataDiscount.RemainingQuantity == 0 {
+		if discount.RemainingQuantity == 0 {
 			return nil, errors.New("discount quota has run out")
 		}
-
+		dataDiscount = discount
 		//	other validation here
 	}
 	if len(carts) > 0 {
@@ -102,6 +102,7 @@ func (useCase *OrderUseCaseImpl) Create(dto dto.OrderRequestBody) (*entity.Order
 		description += i + ". Product : " + product.Title + "<br/>"
 	}
 
+	totalPrice = price
 	if dataDiscount != nil {
 		//	calculate discount logic
 		if dataDiscount.Type == "rebate" {
@@ -109,11 +110,12 @@ func (useCase *OrderUseCaseImpl) Create(dto dto.OrderRequestBody) (*entity.Order
 		} else if dataDiscount.Type == "percent" {
 			totalPrice = price - (price / 100 * int(dataDiscount.Value))
 		}
-		order.DiscountID = dataDiscount.ID
+		order.DiscountID = &dataDiscount.ID
 	}
 
 	order.Price = int64(price)
 	order.TotalPrice = int64(totalPrice) //price after discounted
+	order.CreatedByID = &dto.UserID
 
 	externalId := uuid.New().String()
 	order.ExternalID = externalId
