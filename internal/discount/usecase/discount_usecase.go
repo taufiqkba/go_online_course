@@ -41,7 +41,7 @@ func (useCase *DiscountUseCaseImpl) Create(dto dto.DiscountRequestBody) (*entity
 		Name:              dto.Name,
 		Code:              dto.Code,
 		Quantity:          dto.Quantity,
-		RemainingQuantity: 0,
+		RemainingQuantity: dto.Quantity,
 		Type:              dto.Type,
 		Value:             dto.Value,
 		StartDate: sql.NullTime{
