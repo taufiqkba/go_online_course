@@ -12,7 +12,7 @@ type Order struct {
 	User         *entity.User      `json:"user" gorm:"foreignKey:UserID;references:ID"`
 	UserID       int64             `json:"user_id"`
 	Discount     *entity2.Discount `json:"discount" gorm:"foreignKey:DiscountID;references:ID"`
-	DiscountID   int64             `json:"discount_id"`
+	DiscountID   *int64            `json:"discount_id"`
 	CheckoutLink string            `json:"checkout_link"`
 	ExternalID   string            `json:"external_id"`
 	Price        int64             `json:"price"`
