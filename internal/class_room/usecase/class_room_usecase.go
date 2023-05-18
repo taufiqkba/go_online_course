@@ -16,6 +16,9 @@ type ClassRoomUseCaseImpl struct {
 }
 
 func (usecase *ClassRoomUseCaseImpl) FindAllByUserID(offset int, limit int, userID int) dto.ClassRoomListResponse {
+	//if err := usecase.repository.FindAllByUserID(offset, limit, userID) != nil {
+	//
+	//}
 	//TODO implement me
 	panic("implement me")
 }
