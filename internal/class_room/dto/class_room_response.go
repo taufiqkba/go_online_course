@@ -20,7 +20,7 @@ type ClassRoomResponseBody struct {
 	DeletedAt gorm.DeletedAt   `json:"deleted_at"`
 }
 
-func ClassRoomResponse(entity entity4.ClassRoom) ClassRoomResponseBody {
+func CreateClassRoomResponse(entity entity4.ClassRoom) ClassRoomResponseBody {
 	return ClassRoomResponseBody{
 		ID:        entity.ID,
 		User:      entity.User,
@@ -35,7 +35,14 @@ func ClassRoomResponse(entity entity4.ClassRoom) ClassRoomResponseBody {
 
 type ClassRoomListResponse []ClassRoomResponseBody
 
-func CreateClassRoomListResponse(entity entity4.ClassRoom) ClassRoomListResponse {
-	//	TODO CreateClassRoomListResponse
-	panic("unimplemented")
+func CreateClassRoomListResponse(entity []entity4.ClassRoom) ClassRoomListResponse {
+	classRoomResp := ClassRoomListResponse{}
+
+	for _, classRoom := range entity {
+		classRoom.Product.VideoURL = classRoom.Product.Video
+
+		classRoomResponse := CreateClassRoomResponse(classRoom)
+		classRoomResp = append(classRoomResp, classRoomResponse)
+	}
+	return classRoomResp
 }
