@@ -8,9 +8,9 @@ import (
 )
 
 type OrderDetail struct {
-	ID          int64            `json:"id"`
-	Price       int64            `json:"price"`
-	Order       *entity3.Product `json:"order" gorm:"foreignKey:ProductID;references:ID"`
+	ID    int64 `json:"id"`
+	Price int64 `json:"price"`
+	//Order       *entity3.Product `json:"order" gorm:"foreignKey:ProductID;references:ID"`
 	OrderID     int64            `json:"order_id"`
 	Product     *entity3.Product `json:"product" gorm:"foreignKey:ProductID;referenced:ID"`
 	ProductID   int64            `json:"product_id"`
