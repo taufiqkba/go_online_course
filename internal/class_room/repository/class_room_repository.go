@@ -19,8 +19,7 @@ type ClassRoomRepositoryImpl struct {
 
 // Create implements ClassRoomRepository
 func (repository *ClassRoomRepositoryImpl) Create(entity entity4.ClassRoom) (*entity4.ClassRoom, error) {
-	err := repository.db.Create(&entity).Error
-	if err != nil {
+	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, err
 	}
 	return &entity, nil
@@ -38,10 +37,13 @@ func (repository *ClassRoomRepositoryImpl) FindAllByUserID(offset int, limit int
 func (repository *ClassRoomRepositoryImpl) FindByOneByUserIDAndProductID(userID int, productID int) (*entity4.ClassRoom, error) {
 	var classRoom entity4.ClassRoom
 
-	err := repository.db.Where("user_id = ?", userID).Where("product_id", productID).First(&classRoom).Error
-	if err != nil {
+	if err := repository.db.
+		Where("user_id = ?", userID).
+		Where("product_id", productID).
+		First(&classRoom).Error; err != nil {
 		return nil, err
 	}
+
 	return &classRoom, nil
 }
 
