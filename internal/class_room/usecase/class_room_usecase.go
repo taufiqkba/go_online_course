@@ -32,7 +32,7 @@ func (useCase *ClassRoomUseCaseImpl) Create(dto dto.ClassRoom) (*entity4.ClassRo
 	}
 
 	classRoom := entity4.ClassRoom{
-		ID:        dto.UserID,
+		UserID:    dto.UserID,
 		ProductID: dto.ProductID,
 	}
 	data, err := useCase.repository.Create(classRoom)
