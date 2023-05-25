@@ -7,6 +7,7 @@ import (
 	"go_online_course/internal/order/usecase"
 	"go_online_course/pkg/utils"
 	"net/http"
+	"strconv"
 )
 
 type OrderHandler struct {
@@ -22,6 +23,8 @@ func (handler *OrderHandler) Route(r *gin.RouterGroup) {
 	orderHandler.Use(middleware.AuthJwt)
 	{
 		orderHandler.POST("/orders", handler.Create)
+		orderHandler.GET("/orders", handler.FindAllByUserID)
+
 	}
 }
 func (handler *OrderHandler) Create(ctx *gin.Context) {
@@ -50,9 +53,15 @@ func (handler *OrderHandler) Create(ctx *gin.Context) {
 
 }
 
-func (handler *OrderHandler) FindAll(ctx *gin.Context) {
-	//	TODO Implement me
-	panic("unimplemented")
+func (handler *OrderHandler) FindAllByUserID(ctx *gin.Context) {
+	offset, _ := strconv.Atoi(ctx.Param("offset"))
+	limit, _ := strconv.Atoi(ctx.Param("limit"))
+
+	user := utils.GetCurrentUser(ctx)
+	data := handler.useCase.FindAllByUserID(offset, limit, int(user.ID))
+
+	//return data
+	ctx.JSON(http.StatusCreated, utils.Response(http.StatusCreated, "created", data))
 }
 
 func (handler *OrderHandler) FindByID(ctx *gin.Context) {
