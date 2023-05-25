@@ -13,7 +13,7 @@ type Product struct {
 	ProductCategoryID int64                   `json:"product_category_id"`
 	Title             string                  `json:"title"`
 	Image             *string                 `json:"image"`
-	Video             *string                 `json:"video"`
+	Video             *string                 `json:"-"`
 	VideoURL          *string                 `json:"video_url,omitempty"`
 	Description       string                  `json:"description"`
 	Price             int64                   `json:"price"`
