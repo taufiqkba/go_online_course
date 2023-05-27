@@ -10,6 +10,7 @@ import (
 type ProductUseCase interface {
 	FindAll(offset int, limit int) []entity3.Product
 	FindById(id int) (*entity3.Product, error)
+	Count() int
 	Create(dto dto.ProductRequestBody) (*entity3.Product, error)
 	Update(id int, dto dto.ProductRequestBody) (*entity3.Product, error)
 	Delete(id int) error
@@ -18,6 +19,10 @@ type ProductUseCase interface {
 type ProductUseCaseImpl struct {
 	repository repository.ProductRepository
 	fileUpload cloudinary.FileUpload
+}
+
+func (usecase *ProductUseCaseImpl) Count() int {
+	return usecase.repository.Count()
 }
 
 func (usecase *ProductUseCaseImpl) FindAll(offset int, limit int) []entity3.Product {
