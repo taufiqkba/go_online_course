@@ -43,10 +43,12 @@ func (repository *CartRepositoryImpl) FindByID(id int) (*entity.Cart, error) {
 	return &cart, nil
 }
 
+// Create implements CartRepository
 func (repository *CartRepositoryImpl) Create(entity entity.Cart) (*entity.Cart, error) {
 	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, err
 	}
+
 	return &entity, nil
 }
 

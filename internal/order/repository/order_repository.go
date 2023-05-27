@@ -8,6 +8,9 @@ import (
 
 type OrderRepository interface {
 	FindAll(offset int, limit int) []entity.Order
+	FindAllByUserID(offset int, limit int, userID int) []entity.Order
+	Count() int
+	FindOneByExternalID(externalID string) (*entity.Order, error)
 	FindByID(id int) (*entity.Order, error)
 	Create(entity entity.Order) (*entity.Order, error)
 	Update(entity entity.Order) (*entity.Order, error)
@@ -15,6 +18,35 @@ type OrderRepository interface {
 
 type OrderRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (repository *OrderRepositoryImpl) Count() int {
+	var order entity.Order
+
+	var totalOrder int64
+	repository.db.Model(&order).Count(&totalOrder)
+
+	return int(totalOrder)
+}
+
+func (repository *OrderRepositoryImpl) FindAllByUserID(offset int, limit int, userID int) []entity.Order {
+	var orders []entity.Order
+
+	repository.db.Scopes(utils.Paginate(offset, limit)).
+		Preload("OrderDetails.Product").
+		Where("user_id = ?", userID).
+		Find(&orders)
+	return orders
+}
+
+func (repository *OrderRepositoryImpl) FindOneByExternalID(externalID string) (*entity.Order, error) {
+	var order entity.Order
+
+	err := repository.db.Preload("OrderDetails.Product").Where("external_id = ?", externalID).First(&order).Error
+	if err != nil {
+		return nil, err
+	}
+	return &order, nil
 }
 
 func (repository *OrderRepositoryImpl) Update(entity entity.Order) (*entity.Order, error) {
