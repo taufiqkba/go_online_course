@@ -4,6 +4,7 @@ import (
 	admin "go_online_course/internal/admin/injector"
 	cart "go_online_course/internal/cart/injector"
 	classRoom "go_online_course/internal/class_room/injector"
+	dashboard "go_online_course/internal/dashboard/injector"
 	discount "go_online_course/internal/discount/injector"
 	oauth "go_online_course/internal/oauth/injector"
 	order "go_online_course/internal/order/injector"
@@ -32,6 +33,7 @@ func main() {
 	order.InitializedService(db).Route(&r.RouterGroup)
 	webhook.InitializedService(db).Route(&r.RouterGroup)
 	classRoom.InitializedService(db).Route(&r.RouterGroup)
+	dashboard.InitializedService(db).Route(&r.RouterGroup)
 
 	r.Run() //0.0.0.0:8080
 }
