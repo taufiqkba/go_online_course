@@ -9,6 +9,7 @@ import (
 type OrderRepository interface {
 	FindAll(offset int, limit int) []entity.Order
 	FindAllByUserID(offset int, limit int, userID int) []entity.Order
+	Count() int
 	FindOneByExternalID(externalID string) (*entity.Order, error)
 	FindByID(id int) (*entity.Order, error)
 	Create(entity entity.Order) (*entity.Order, error)
@@ -17,6 +18,15 @@ type OrderRepository interface {
 
 type OrderRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (repository *OrderRepositoryImpl) Count() int {
+	var order entity.Order
+
+	var totalOrder int64
+	repository.db.Model(&order).Count(&totalOrder)
+
+	return int(totalOrder)
 }
 
 func (repository *OrderRepositoryImpl) FindAllByUserID(offset int, limit int, userID int) []entity.Order {

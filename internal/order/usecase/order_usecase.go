@@ -21,6 +21,7 @@ import (
 type OrderUseCase interface {
 	FindAll(offset int, limit int) []entity.Order
 	FindAllByUserID(offset int, limit int, userID int) []entity.Order
+	Count() int
 	FindByID(id int) (*entity.Order, error)
 	FindByExternalID(externalID string) (*entity.Order, error)
 	Create(dto dto.OrderRequestBody) (*entity.Order, error)
@@ -34,6 +35,10 @@ type OrderUseCaseImpl struct {
 	productUseCase     usecase3.ProductUseCase
 	orderDetailUseCase usecase4.OrderDetailUseCase
 	paymentUseCase     usecase5.PaymentUseCase
+}
+
+func (useCase *OrderUseCaseImpl) Count() int {
+	return useCase.repository.Count()
 }
 
 func (useCase *OrderUseCaseImpl) FindAllByUserID(offset int, limit int, userID int) []entity.Order {
