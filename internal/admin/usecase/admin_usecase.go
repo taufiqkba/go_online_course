@@ -11,6 +11,7 @@ import (
 type AdminUseCase interface {
 	FindAll(offset int, limit int) []entity.Admin
 	FindByID(id int) (*entity.Admin, error)
+	Count() int
 	FindByEmail(email string) (*entity.Admin, error)
 	Create(dto dto.AdminRequestBody) (*entity.Admin, error) //why depend to AdminRequestBody
 	Update(id int, dto dto.AdminRequestBody) (*entity.Admin, error)
@@ -19,6 +20,10 @@ type AdminUseCase interface {
 
 type AdminUseCaseImpl struct {
 	repository repository.AdminRepository
+}
+
+func (usecase *AdminUseCaseImpl) Count() int {
+	return usecase.repository.Count()
 }
 
 // Create implements AdminUseCase
