@@ -21,7 +21,7 @@ type UserRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (repository UserRepositoryImpl) Count() int {
+func (repository *UserRepositoryImpl) Count() int {
 	var user entity.User
 
 	var totalUser int64
@@ -29,7 +29,7 @@ func (repository UserRepositoryImpl) Count() int {
 	return int(totalUser)
 }
 
-func (repository UserRepositoryImpl) FindByEmail(email string) (*entity.User, error) {
+func (repository *UserRepositoryImpl) FindByEmail(email string) (*entity.User, error) {
 	var user entity.User
 	if err := repository.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
@@ -37,11 +37,7 @@ func (repository UserRepositoryImpl) FindByEmail(email string) (*entity.User, er
 	return &user, nil
 }
 
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &UserRepositoryImpl{db}
-}
-
-func (repository UserRepositoryImpl) FindAll(offset int, limit int) []entity.User {
+func (repository *UserRepositoryImpl) FindAll(offset int, limit int) []entity.User {
 	var users []entity.User
 
 	repository.db.Scopes(utils.Paginate(offset, limit)).Find(&users)
@@ -49,7 +45,7 @@ func (repository UserRepositoryImpl) FindAll(offset int, limit int) []entity.Use
 	return users
 }
 
-func (repository UserRepositoryImpl) FindById(id int) (*entity.User, error) {
+func (repository *UserRepositoryImpl) FindById(id int) (*entity.User, error) {
 	var users entity.User
 	if err := repository.db.First(&users, id).Error; err != nil {
 		return nil, err
@@ -57,23 +53,27 @@ func (repository UserRepositoryImpl) FindById(id int) (*entity.User, error) {
 	return &users, nil
 }
 
-func (repository UserRepositoryImpl) Create(entity entity.User) (*entity.User, error) {
+func (repository *UserRepositoryImpl) Create(entity entity.User) (*entity.User, error) {
 	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, err
 	}
 	return &entity, nil
 }
 
-func (repository UserRepositoryImpl) Update(entity entity.User) (*entity.User, error) {
+func (repository *UserRepositoryImpl) Update(entity entity.User) (*entity.User, error) {
 	if err := repository.db.Save(&entity).Error; err != nil {
 		return nil, err
 	}
 	return &entity, nil
 }
 
-func (repository UserRepositoryImpl) Delete(entity entity.User) error {
+func (repository *UserRepositoryImpl) Delete(entity entity.User) error {
 	if err := repository.db.Delete(&entity).Error; err != nil {
 		return err
 	}
 	return nil
+}
+
+func NewUserRepositoryImpl(db *gorm.DB) UserRepository {
+	return &UserRepositoryImpl{db}
 }

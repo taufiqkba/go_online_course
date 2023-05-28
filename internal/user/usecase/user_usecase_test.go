@@ -10,7 +10,7 @@ import (
 )
 
 var userRepository = &repository.UserRepositoryMock{Mock: mock.Mock{}}
-var userUseCase = UserUseCaseImpl{repository: repository.UserRepositoryImpl{}}
+var userUseCase = UserUseCaseImpl{repository: &repository.UserRepositoryImpl{}}
 
 func TestUserUseCase_FindByIDSuccess(t *testing.T) {
 	userData := entity.User{
