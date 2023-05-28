@@ -37,3 +37,17 @@
 - Implement connection to Cloudinary
 - Product Service
 - Cart service
+
+### DAY 6
+
+- Implement order_discount service
+- Create Order services
+- Integration to Xendit Payment Gateway
+
+### DAY 7
+
+- Implement Web Hook Payment Gateway
+- Complete Get User service
+- Implement dashboard admin feature
+- Implement Class Room service
+- Fix several errors code

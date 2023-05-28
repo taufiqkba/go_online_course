@@ -12,10 +12,20 @@ type CartRepository interface {
 	FindByID(id int) (*entity.Cart, error)
 	Create(entity entity.Cart) (*entity.Cart, error)
 	Delete(entity entity.Cart) error
+	DeleteByUserID(userID int) error
 }
 
 type CartRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (repository *CartRepositoryImpl) DeleteByUserID(userID int) error {
+	var cart entity.Cart
+	err := repository.db.Where("user_id = ?", userID).Delete(&cart).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (repository *CartRepositoryImpl) FindByUserID(userID int, offset int, limit int) []entity.Cart {
@@ -33,10 +43,12 @@ func (repository *CartRepositoryImpl) FindByID(id int) (*entity.Cart, error) {
 	return &cart, nil
 }
 
+// Create implements CartRepository
 func (repository *CartRepositoryImpl) Create(entity entity.Cart) (*entity.Cart, error) {
 	if err := repository.db.Create(&entity).Error; err != nil {
 		return nil, err
 	}
+
 	return &entity, nil
 }
 

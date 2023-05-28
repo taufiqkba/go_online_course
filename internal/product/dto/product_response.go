@@ -14,6 +14,7 @@ type ProductResponseBody struct {
 	Title           string                  `json:"title"`
 	Image           string                  `json:"image"`
 	Video           string                  `json:"video"`
+	VideoURL        *string                 `json:"video_url"`
 	Description     string                  `json:"description"`
 	Price           int64                   `json:"price"`
 	CratedBy        *entity2.Admin          `json:"crated_by"`

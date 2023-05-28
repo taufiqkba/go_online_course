@@ -1,15 +1,16 @@
 package usecase
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"go_online_course/internal/user/entity"
 	"go_online_course/internal/user/repository"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 var userRepository = &repository.UserRepositoryMock{Mock: mock.Mock{}}
-var userUseCase = UserUseCaseImpl{repository: userRepository}
+var userUseCase = UserUseCaseImpl{repository: repository.UserRepositoryImpl{}}
 
 func TestUserUseCase_FindByIDSuccess(t *testing.T) {
 	userData := entity.User{

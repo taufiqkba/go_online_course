@@ -9,6 +9,7 @@ import (
 type ProductRepository interface {
 	FindAll(offset int, limit int) []entity3.Product
 	FindById(id int) (*entity3.Product, error)
+	Count() int
 	Create(entity entity3.Product) (*entity3.Product, error)
 	Update(entity entity3.Product) (*entity3.Product, error)
 	Delete(entity entity3.Product) error
@@ -16,6 +17,15 @@ type ProductRepository interface {
 
 type ProductRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (repository *ProductRepositoryImpl) Count() int {
+	var product entity3.Product
+
+	var totalProduct int64
+	repository.db.Model(&product).Count(&totalProduct)
+
+	return int(totalProduct)
 }
 
 func (repository *ProductRepositoryImpl) FindAll(offset int, limit int) []entity3.Product {
