@@ -65,8 +65,16 @@ func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.Use
 
 // Delete implements UserUseCase
 func (usecase *UserUseCaseImpl) Delete(id int) error {
-	//TODO Implement me
-	panic("unimplemented")
+	user, err := usecase.repository.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	err = usecase.repository.Delete(*user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // FindAll implements UserUseCase
@@ -86,13 +94,16 @@ func (usecase *UserUseCaseImpl) FindById(id int) (*entity.User, error) {
 
 // Update implements UserUseCase
 func (usecase *UserUseCaseImpl) Update(id int, dto dto.UserRequestBody) (*entity.User, error) {
+	//find id data first
 	user, err := usecase.repository.FindById(id)
 	if err != nil {
 		return nil, err
 	}
+
 	if dto.Name != nil {
 		user.Name = *dto.Name
 	}
+
 	if dto.Email != nil {
 		if user.Email != *dto.Email {
 			user.Email = *dto.Email
@@ -110,6 +121,7 @@ func (usecase *UserUseCaseImpl) Update(id int, dto dto.UserRequestBody) (*entity
 	if dto.UpdatedBy != nil {
 		user.UpdatedByID = dto.UpdatedBy
 	}
+
 	updateUser, err := usecase.repository.Update(*user)
 	if err != nil {
 		return nil, err
