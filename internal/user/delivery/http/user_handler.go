@@ -40,11 +40,13 @@ func (handler *UserHandler) FindAll(ctx *gin.Context) {
 }
 
 func (handler *UserHandler) FindByID(ctx *gin.Context) {
-	id, _ := strconv.Atoi(ctx.Param("offset"))
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	data, err := handler.usecase.FindById(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, utils.Response(http.StatusNotFound, "not found", err.Error()))
+		ctx.Abort()
+		return
 	}
 	ctx.JSON(http.StatusOK, utils.Response(http.StatusOK, "ok", data))
 }
@@ -53,26 +55,46 @@ func (handler *UserHandler) Create(ctx *gin.Context) {
 	var input dto.UserRequestBody
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-
+		ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", err.Error()))
+		ctx.Abort()
+		return
 	}
+	user := utils.GetCurrentUser(ctx)
+	input.CreatedBy = &user.ID
+
+	data, err := handler.usecase.Create(input)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, utils.Response(http.StatusInternalServerError, "internal server error", err.Error()))
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusCreated, utils.Response(http.StatusCreated, "created", data))
 }
 
 func (handler *UserHandler) Update(ctx *gin.Context) {
-	//TODO Implement me
-	//id, _ := strconv.Atoi(ctx.Param("offset"))
-	//
-	//var input dto.UserRequestBody
-	//
-	//if err := ctx.ShouldBindJSON(&input); err != nil{
-	//	ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", err.Error()))
-	//	ctx.Abort()
-	//	return
-	//}
-	//user := utils.GetCurrentUser(ctx)
+	id, _ := strconv.Atoi(ctx.Param("id"))
+
+	var input dto.UserRequestBody
+
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.Response(http.StatusBadRequest, "bad request", err.Error()))
+		ctx.Abort()
+		return
+	}
+	user := utils.GetCurrentUser(ctx)
+	input.UpdatedBy = &user.ID
+
+	data, err := handler.usecase.Update(id, input)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, utils.Response(http.StatusInternalServerError, "internal server error", err.Error()))
+		ctx.Abort()
+		return
+	}
+	ctx.JSON(http.StatusOK, utils.Response(http.StatusOK, "ok", data))
 }
 
 func (handler *UserHandler) Delete(ctx *gin.Context) {
-	id, _ := strconv.Atoi(ctx.Param("offset"))
+	id, _ := strconv.Atoi(ctx.Param("id"))
 
 	err := handler.usecase.Delete(id)
 	if err != nil {

@@ -14,7 +14,7 @@ import (
 func InitializedService(db *gorm.DB) *http.UserHandler {
 	wire.Build(
 		http.NewUserHandler,
-		repository.NewUserRepository,
+		repository.NewUserRepositoryImpl,
 		usecase.NewUserUseCase,
 	)
 	return &http.UserHandler{}
