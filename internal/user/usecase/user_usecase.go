@@ -46,11 +46,10 @@ func (usecase *UserUseCaseImpl) Create(userDto dto.UserRequestBody) (*entity.Use
 	}
 
 	user := entity.User{
-		ID:           0,
 		Name:         *userDto.Name,
 		Email:        *userDto.Email,
 		Password:     string(hashedPassword),
-		CodeVerified: utils.RandomString(12),
+		CodeVerified: utils.RandomString(32),
 	}
 	if userDto.CreatedBy != nil {
 		user.CreatedByID = userDto.CreatedBy
