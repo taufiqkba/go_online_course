@@ -51,3 +51,8 @@
 - Implement dashboard admin feature
 - Implement Class Room service
 - Fix several errors code
+
+### DAY 8
+
+- Complete User Services for Admin
+- Implement unit testing for User services
