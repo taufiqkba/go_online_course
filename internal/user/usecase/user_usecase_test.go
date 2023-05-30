@@ -10,16 +10,23 @@ import (
 )
 
 var userRepository = &repository.UserRepositoryMock{Mock: mock.Mock{}}
-var userUseCase = UserUseCaseImpl{repository: &repository.UserRepositoryImpl{}}
+var userUseCase = UserUseCaseImpl{repository: userRepository}
 
 func TestUserUseCase_FindByIDSuccess(t *testing.T) {
 	userData := entity.User{
 		ID:   1,
-		Name: "taufiqkba",
+		Name: "user",
 	}
-	userRepository.Mock.On("FindByID", 1).Return(userData)
+	userRepository.Mock.On("FindById", 1).Return(userData)
 
 	user, err := userUseCase.FindById(1)
+	assert.NotNil(t, user)
+	assert.Nil(t, err)
+}
+
+func TestUserUseCaseImpl_FindByIdNotFound(t *testing.T) {
+	userRepository.Mock.On("FindById", 2).Return(nil)
+	user, err := userUseCase.FindById(2)
 	assert.Nil(t, user)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 }
